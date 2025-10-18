@@ -12,8 +12,8 @@ LIMITERS = {
     "alpha":AsyncLimiter(5, 60), 
     "marketaux":AsyncLimiter(1, 5),
     "newsapi":AsyncLimiter(1, 5),
-    "fred":AsyncLimiter(1, 3),
-    "worldbank":AsyncLimiter(1, 3)
+    "fred":AsyncLimiter(1, 2),
+    "worldbank":AsyncLimiter(1, 2)
 }
 
 DEFAULT_HEADERS = {"User-Agent": "MarketSentinel/async-ingest/1.0"}

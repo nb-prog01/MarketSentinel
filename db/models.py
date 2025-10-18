@@ -83,6 +83,8 @@ class IngestionLog(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
     source = Column(String)
+    job_type=Column(Text)
+    error_message=Column(Text)
     status = Column(String)
     message = Column(Text)
     timestamp = Column(TIMESTAMP(timezone=True), server_default=func.now())

@@ -6,8 +6,8 @@ from scripts.ingestion_async.fetch_news_async import ingest_news_for_symbol
 from scripts.ingestion_async.fetch_macro_async import ingest_macro
 from scripts.ingestion_async.fetch_transactions_async import ingest_transactions
 
-SYMBOLS = ["AAPL", "MSFT", "GOOG"]
-MAX_CONCURRENT = 3
+SYMBOLS = ["AAPL", "MSFT", "GOOG", "NVDA"]
+MAX_CONCURRENT = 6
 
 # Flag that will be set by CLI argument
 DRY_RUN = False

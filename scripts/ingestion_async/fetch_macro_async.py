@@ -9,6 +9,7 @@ WORLD_BASE="https://api.worldbank.org/v2"
 fred_series_map={
     "GDP":"GDP", #placeholder, replace with real series IDs
     "Inflation":"FPCPITOTLZGUSA",
+    "":"CPIAUCSL",
     "Unemployment":"UNRATE",
     "InterestRate":"FEDFUNDS"
 }
@@ -20,15 +21,15 @@ wb_map={
     "InterestRate":"FR.INR.RINR"
 }
 
-async def fetch_fred(series_id:str):
+async def fetch_fred(session, series_id:str):
     url="https://api.stlouisfed.org/fred/series/observations"
     params={"series_id":series_id, "api_key":FRED_KEY, "file_type":"json"}
-    return await http_get(None, url, params=params, limiter=LIMITERS["fred"])
+    return await http_get(session, url, params=params, limiter=LIMITERS["fred"])
 
-async def fetch_worldbank(indicator:str, country:str="US"):
+async def fetch_worldbank(session, indicator:str, country:str="US"):
     url=f"{WORLD_BASE}/country/{country}/indicator/{indicator}"
     params={"format":"json", "per_page":5000}
-    return await http_get(None, url, params=params, limiter=LIMITERS["worldbank"])
+    return await http_get(session, url, params=params, limiter=LIMITERS["worldbank"])
 
 def normalize_fred(obs, indicator_name):
     date=obs.get("date")
@@ -70,22 +71,23 @@ async def upsert_macro_rows(rows):
     return len(rows)
 
 async def ingest_macro():
-    rows=[]
-    #try FRED first for each indicator
-    for name, s in fred_series_map.items():
-        try:
-            payload=await fetch_fred(s)
-            observations=payload.get("observations", [])
-            for obs in observations:
-                rows.append(normalize_fred(obs, name))
-        except Exception:
+    async with get_client() as session:
+        rows=[]
+        #try FRED first for each indicator
+        for name, s in fred_series_map.items():
+            try:
+                payload=await fetch_fred(session,s)
+                observations=payload.get("observations", [])
+                for obs in observations:
+                    rows.append(normalize_fred(obs, name))
+            except Exception:
                 #fallback to World Bank
-            wb_id=wb_map.get(name)
-            if wb_id:
-                try:
-                    payload=await fetch_worldbank(wb_id)
-                    for obs in payload[1]:
-                        rows.append(normalize_wb(obs, name, obs.get("country", {}).get("id", "US")))
-                except Exception:
-                        pass
+                wb_id=wb_map.get(name)
+                if wb_id:
+                    try:
+                        payload=await fetch_worldbank(session, wb_id)
+                        for obs in payload[1]:
+                            rows.append(normalize_wb(obs, name, obs.get("country", {}).get("id", "US")))
+                    except Exception:
+                            pass
     return await upsert_macro_rows(rows)
