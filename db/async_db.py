@@ -7,7 +7,7 @@ load_dotenv()
 
 DB_URL = os.getenv("DATABASE_URL","postgresql+asyncpg://postgres:arise#007@localhost:5432/marketsentinel")
 
-engine=create_async_engine(DB_URL, pool_size=10, max_overflow=20, future=True)
+engine=create_async_engine(DB_URL, pool_size=20, max_overflow=40, pool_timeout=60, pool_recycle=1800, future=True)
 AsyncSessionLocal=sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 #helper to get session from async context

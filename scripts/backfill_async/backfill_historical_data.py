@@ -102,7 +102,7 @@ async def upsert_news_rows(rows: List[Dict[str,Any]], dry_run: bool):
             INSERT INTO {SCHEMA}.news_data
             (news_id,symbol,timestamp,headline,summary,source,url,sentiment_score,keywords,retrieved_at)
             VALUES (:news_id,:symbol,:timestamp,:headline,:summary,:source,:url,:sentiment_score,:keywords,:retrieved_at)
-            ON CONFLICT (news_id) DO UPDATE
+            ON CONFLICT (symbol, news_id, timestamp) DO UPDATE
               SET sentiment_score = EXCLUDED.sentiment_score,
                   retrieved_at = EXCLUDED.retrieved_at;
             """), rows

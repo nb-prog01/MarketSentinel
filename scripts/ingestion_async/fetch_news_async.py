@@ -1,3 +1,4 @@
+import json
 import os, datetime as dt, pandas as pd, hashlib
 from sqlalchemy import text
 from db.async_db import engine
@@ -27,7 +28,7 @@ def normalize_marketaux_item(it: dict, symbol: str):
     published_at=it.get("published_at") or it.get("publishedAt")
     url=it.get("url") or it.get("link")
     title=it.get("title") or ""
-    nid=it.get("id") or make_news_id(url or "", title, published_at or "")
+    nid=it.get("id") or it.get("uuid") or make_news_id(url or "", title, published_at or "")
     raw_keywords=it.get("keywords","")
     if isinstance(raw_keywords, str):
         keywords=[kw.strip() for kw in raw_keywords.split(",") if kw.strip()]
@@ -70,7 +71,7 @@ def normalize_newsapi_item(it: dict, symbol: str):
         "source": (it.get("source")or {}).get("name"),
         "url":url,
         "sentiment_score":None,
-        "keywords":keywords,
+        "keywords":json.dumps(keywords),
         "retrieved_at": dt.datetime.utcnow()
     }
 
@@ -93,13 +94,15 @@ async def upsert_news_rows(rows:list):
 async def ingest_news_for_symbol(symbol:str)->int:
     async with get_client() as session:
         try:
-            items=await fetch_marketaux(session, symbol)
-        except Exception:
+            # items=await fetch_marketaux(session, symbol)
             items=await fetch_newsapi(session, symbol)
+        except Exception:
+            items=await fetch_marketaux(session, symbol)
+            # items=await fetch_newsapi(session, symbol)
     rows=[]
     for it in items:
         #choose normalizer by presence of certain keys
-        if it.get("id") or it.get("published_at"):
+        if it.get("uuid") and it.get("published_at"):
             rows.append(normalize_marketaux_item(it, symbol))
         else:
             rows.append(normalize_newsapi_item(it, symbol))
