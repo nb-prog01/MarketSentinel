@@ -1,5 +1,17 @@
 # Imputed data files
-preprocess/imputed_data/*
+preprocess
+
+gnn_data
+final_output
+venv_clean
+venv_model
+backtests
+checkpoints
+
+# parquets and csvs
+*.parquet
+*.csv
+*.h5
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
