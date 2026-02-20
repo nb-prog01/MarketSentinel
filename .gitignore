@@ -1,6 +1,5 @@
 # Imputed data files
 preprocess
-
 gnn_data
 final_output
 venv_clean
@@ -8,10 +7,11 @@ venv_model
 backtests
 checkpoints
 
-# parquets and csvs
+# parquets and csvs and zips
 *.parquet
 *.csv
 *.h5
+*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

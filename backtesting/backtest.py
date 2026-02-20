@@ -44,8 +44,8 @@ BACKTEST_DIR.mkdir(exist_ok=True)
 # CANARY BACKTEST MODE (RUNTIME ONLY)
 # ============================================================
 
-CANARY_BACKTEST = True      # Flip to False for full backtest
-CANARY_FRACTION = 0.05      # 5% is ideal for smoke tests
+CANARY_BACKTEST = False      # Flip to False for full backtest
+CANARY_FRACTION = 0.25      # 5% is ideal for smoke tests
 
 
 # ============================================================

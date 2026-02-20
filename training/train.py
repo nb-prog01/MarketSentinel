@@ -33,7 +33,7 @@ NUM_WORKERS = 0           # Windows-safe
 HIDDEN_DIM = 128
 LR = 1e-3
 WEIGHT_DECAY = 1e-4
-MAX_EPOCHS = 3
+MAX_EPOCHS = 2
 EARLY_STOPPING_PATIENCE = 5
 
 CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints"
@@ -44,7 +44,7 @@ CHECKPOINT_DIR.mkdir(exist_ok=True)
 # ============================================================
 
 CANARY_RUN = True          # Set False for full training
-CANARY_FRACTION = 0.015     # 25–30% recommended
+CANARY_FRACTION = 0.25     # 25–30% recommended
 CANARY_MAX_BATCHES = None # Optional hard cap (e.g. 20)
 
 
